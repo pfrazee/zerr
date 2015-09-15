@@ -1,7 +1,7 @@
 
 module.exports = function zerr (name, msgTemplate) {
   // make sure the name ends with the word Error
-  if (name.indexOf('Error') != name.length - 'Error'.length)
+  if (name.slice(-5) != 'Error')
     name += 'Error'
 
   function ZError () {
