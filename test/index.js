@@ -36,3 +36,14 @@ tape('interpolated message', function (t) {
   t.equal((Bar('FOO', 'BAR')).message, 'foo: FOO, bar: BAR')
   t.end()
 })
+
+tape('non-interpolated message', function (t) {
+  var Foo = zerr('Foo')
+  var Bar = zerr('Bar')
+
+  t.equal((Foo('FOO')).message, 'FOO')
+  t.equal((Bar('FOO')).message, 'FOO')
+  t.equal((Foo('FOO', 'BAR')).message, 'FOO')
+  t.equal((Bar('FOO', 'BAR')).message, 'FOO')
+  t.end()
+})

@@ -16,7 +16,11 @@ module.exports = function zerr (name, msgTemplate) {
     Error.call(this)
     Error.captureStackTrace(this, arguments.callee)
     this.name = name
-    this.message = interp(msgTemplate, arguments)
+
+    if (msgTemplate)
+      this.message = interp(msgTemplate, arguments)
+    else if (typeof arguments[0] == 'string')
+      this.message = arguments[0]
   }
   ZError.prototype = Object.create(Error.prototype)
   return ZError
