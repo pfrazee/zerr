@@ -26,6 +26,26 @@ tape('set error params (.name, .message, .stack)', function (t) {
   t.end()
 })
 
+tape('explain error', function (t) {
+  var FirstError  = zerr('First',     'The First error')
+  var SecondError = zerr('Second',    'The Second error')
+  
+  function makeFirst () {
+    return new FirstError()
+  }
+
+  try {
+    var first = makeFirst()
+    throw new SecondError(first)
+  } catch (err) {
+    console.log(err.stack)
+    t.ok(err.stack.indexOf('FirstError') >= 0)
+    t.ok(err.stack.indexOf('SecondError') >= 0)
+  }
+
+  t.end()
+})
+
 tape('interpolated message', function (t) {
   var Foo = zerr('Foo', 'foo: %')
   var Bar = zerr('Bar', 'foo: %, bar: %')

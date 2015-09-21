@@ -17,10 +17,25 @@ module.exports = function zerr (name, msgTemplate) {
     Error.captureStackTrace(this, arguments.callee)
     this.name = name
 
+    // if an error was passed, shift it out of the args
+    var parentErr
+    var args = Array.prototype.slice.call(arguments)
+    if (args[0] instanceof Error)
+      parentErr = args.shift()
+
+    // create message
     if (msgTemplate)
-      this.message = interp(msgTemplate, arguments)
-    else if (typeof arguments[0] == 'string')
-      this.message = arguments[0]
+      this.message = interp(msgTemplate, args)
+    else if (typeof args[0] == 'string')
+      this.message = args[0]
+
+    // modify stack to show parent error
+    if (parentErr) {
+      var stack = removePrefix(getStack(this), getStack(parentErr)).join('\n')
+      this.stack =
+        this.name + ': ' + this.message + '\n' +
+        stack + '\n  ' + parentErr.stack
+    }
   }
   ZError.prototype = Object.create(Error.prototype)
   return ZError
@@ -35,4 +50,16 @@ var re = /%/g
 function interp (tmpl, args) {
   var n = 0
   return tmpl.replace(re, function () { return args[n++] || '' })
+}
+
+
+function getStack(err) {
+  return err.stack.substring(err.name.length + 3 + err.message.length)
+    .split('\n')
+}
+
+function removePrefix (a, b) {
+  return a.filter(function (e) {
+    return !~b.indexOf(e)
+  })
 }

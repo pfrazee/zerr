@@ -28,4 +28,16 @@ try { throw new BadParam('foo is bad') }
 catch (e) {
   console.log(e.message) // => 'foo is bad'
 }
+
+// if you pass an error as the first param to the constructor, zerr will add its stack to the stack history
+// (taken from https://github.com/dominictarr/explain-error)
+try { throw new BadParam(new BadParam('earlier foo was bad'), 'foo is bad') }
+catch (e) {
+  console.log(e.stack) /* =>
+  BadPararmError: foo is bad
+      at repl:1:7
+    BadPararmError: earlier foo was bad
+      at repl:1:15
+  */
+}
 ```
