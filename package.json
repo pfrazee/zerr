@@ -17,7 +17,7 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
+  "devDependencies": {
     "tape": "^4.2.0"
   },
   "repository": {
