@@ -7,36 +7,37 @@ var zerr = require('zerr')
 
 // first param: error name
 // second param: string template for error messages (substitutes '%' with args in constructor)
-var BadParam = zerr('BadParam', '% must be a %')
+var BadParam = zerr('BadParam', '% is an invalid parameter. Expected %.')
 
 // using the created error:
-try { throw new BadParam('foo', 'string') }
+try { throw new BadParam('x', 'y') }
 catch (e) {
   console.log(e.name) // => 'BadParamError'
-  console.log(e.message) // => 'foo must be a string'
-  console.log(e.stack) // => 'BadParamError: foo must be a string\nat repl:1:13...'
+  console.log(e.message) // => 'x is an invalid parameter. Expected y.'
+  console.log(e.stack) // => 'BadParamError: x is an invalid parameter. Expected y.\nat repl:1:13...'
   console.log(e instanceof Error) // => true
   console.log(e instanceof BadParam) // => true
 }
 
 // the `new` is optional
-throw BadParam('foo', 'string')
+throw BadParam('x', 'y')
 
 // if no string template is given, zerr will just use the constructor's param as the message
 var BadParam = zerr('BadParam')
-try { throw new BadParam('foo is bad') }
+try { throw new BadParam('x is bad') }
 catch (e) {
-  console.log(e.message) // => 'foo is bad'
+  console.log(e.message) // => 'x is bad'
 }
 
 // if you pass an error as the first param to the constructor, zerr will add its stack to the stack history
+// this helps you follow the trail of an exception that is caught, and then rethrown
 // (taken from https://github.com/dominictarr/explain-error)
-try { throw new BadParam(new BadParam('earlier foo was bad'), 'foo is bad') }
+try { throw new BadParam(new BadParam('earlier error'), 'later error') }
 catch (e) {
   console.log(e.stack) /* =>
-  BadPararmError: foo is bad
+  BadPararmError: later error
       at repl:1:7
-    BadPararmError: earlier foo was bad
+    BadPararmError: earlier error
       at repl:1:15
   */
 }
